@@ -1,6 +1,5 @@
 import sys
 import Queue
- 
 
 class NFA:
 
@@ -36,13 +35,6 @@ class NFA:
     def get_closure_trans(self):
         return self.closure_trans
         
-'''
-def print_nfa(NFA):
-    print(nfa.get_n_states())
-    print(nfa.get_alphabet())
-    for i in nfa.get_trans_set:
-        print(i)
-'''
 
 class DFA:
 
@@ -81,16 +73,6 @@ class DFA:
         self.start_state = new_start_state
 
 
-
-'''
-def print_dfa(DFA):
-    print(dfa.get_n_states())
-    print(dfa.get_alphabet())
-    for i in dfa.get_trans_set:
-        print(i)
-'''
-
-
 def closure(NFA, start_state):
     '''
     Closure method: For given start_state, follow the epsilon transitions all the way through and add the new qb states to the final_set 
@@ -107,7 +89,6 @@ def closure(NFA, start_state):
             if (move[0] == state) and (move[1] == 'e') and ((move[2] not in final_set) and (move[2] != start_state)):
                 track.append(move[2])
                 final_set.append(move[2])
-    #print("returning from closure")
     return final_set
 
 
@@ -129,7 +110,6 @@ def init_NFA(NFA, state, alphabet):
                 results.append(transition[2])
         # append current set to add new qb state
         final[1].append((symbol, results))
-	#print("returning from init_NFA")
     return final
 
 
@@ -150,7 +130,6 @@ def move(NFA, new_state, symbol):
                 new_set.append(transition[2])
     
     new_set.sort() 
-    #print("returning from move")
     return new_set
         
         
@@ -164,7 +143,7 @@ def init_DFA(NFA, NFA_start_state):
 
     new_trans = []
     new_accept = []
-    # todo: keep track of num new states and do similar thing for qa and qb stack 
+    # keep track of num new states and do similar thing for qa and qb stack 
     start = NFA.get_closure_trans()[NFA_start_state - 1]
     start_state = [NFA_start_state]
     for transition in start[1]:
@@ -189,20 +168,16 @@ def init_DFA(NFA, NFA_start_state):
                 closure_trans = NFA.get_closure_trans()[state-1]
                 for trans in closure_trans[1]:
                     if trans[0] == letter:
-                        #print(letter)
                         for x in trans[1]:
                             if x not in results:
                                 # append results
                                 results.append(x)
-                                #print(results)
                                 x_closure = NFA.get_closure_trans()[x-1]
                                 # check the closure of the new results
                                 for y_closure in x_closure[1][0][1]:
                                     if y_closure not in results:
                                         # append results
-                                        results.append(y_closure)
-                                        #print(results)
-                
+                                        results.append(y_closure)                
                        
             # sort the results so that we can see if they are used in the dfa
             results.sort()
@@ -212,7 +187,6 @@ def init_DFA(NFA, NFA_start_state):
             if (results not in new_states) and (results != state_to_be_handled):
                 states_stack.append(results)
                 new_states.append(results)
-
      
     # set id of dfa transitions
     for b in new_trans:
@@ -230,7 +204,6 @@ def init_DFA(NFA, NFA_start_state):
     # set the start state of dfa to correct id
     newDFA.set_start_state(new_states.index(start_state) + 1)
     
-    #print_dfa(newDFA)
     return newDFA
 
 
@@ -300,7 +273,7 @@ def write_file(output_file, DFA):
     ofp.write("\n")
     counter = len(DFA.get_accept_states())
 
-    #writes the accept states to file
+    # writes the accept states to file
     for accept_states in DFA.get_accept_states():
         ofp.write(str(accept_states))
         counter -= 1
